@@ -36,21 +36,23 @@ public class PostServlet extends HttpServlet {
         String priceStr = request.getParameter("price");
         String offPercentageStr = request.getParameter("offPercentage");
         String coadminIdStr = request.getParameter("coadminId");
-        
-        int coadminId = 0;
+        String category = request.getParameter("category");
+        String content = request.getParameter("content");
+
+        int coadminID = 0;
         if(coadminIdStr != null) {
-        	coadminId = Integer.parseInt(coadminIdStr);
+        	coadminID = Integer.parseInt(coadminIdStr);
         }
         double price = priceStr != null ? Double.parseDouble(priceStr) : 0;
         double offPercentage = offPercentageStr != null ? Double.parseDouble(offPercentageStr) : 0;
 
         // Retrieve CoadminID from the session
-        int coadminID;
-        try {
-            coadminID = getCoadminID(request);
-        } catch (ServletException e) {
-            throw new ServletException("Failed to get CoadminID.", e);
-        }
+//        int coadminID;
+//        try {
+//            coadminID = getCoadminID(request);
+//        } catch (ServletException e) {
+//            throw new ServletException("Failed to get CoadminID.", e);
+//        }
 
         // Insert post into the database
         int postID;
@@ -62,8 +64,8 @@ public class PostServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conn = DriverManager.getConnection(jdbcURL, dbUser, dbPassword);
 
-            String sql = "INSERT INTO Post (CoadminID, PostType, Title, Description, Location, Price, RoomType, TableNumber, VehicleType, VehicleNumber, OffPercentage, CreatedAt) "
-                       + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+            String sql = "INSERT INTO Post (CoadminID, PostType, Title, Description, Location, Price, RoomType, TableNumber, VehicleType, VehicleNumber, OffPercentage, category, content, CreatedAt) "
+                       + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
             try (PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
                 stmt.setInt(1, coadminID);
                 stmt.setString(2, postType);
@@ -76,6 +78,8 @@ public class PostServlet extends HttpServlet {
                 stmt.setNull(9, java.sql.Types.VARCHAR);
                 stmt.setNull(10, java.sql.Types.VARCHAR);
                 stmt.setDouble(11, offPercentage);
+                stmt.setString(12, category);
+                stmt.setString(13, content);
 
                 stmt.executeUpdate();
 
@@ -94,7 +98,7 @@ public class PostServlet extends HttpServlet {
             for (Part filePart : fileParts) {
                 if ("images".equals(filePart.getName())) {
                     try (InputStream fileInputStream = filePart.getInputStream()) {
-                        saveFile(fileInputStream, postID, coadminId);
+                        saveFile(fileInputStream, postID, coadminID);
                     }
                 }
             }
@@ -107,24 +111,24 @@ public class PostServlet extends HttpServlet {
         response.sendRedirect("coadmin.jsp?message=\"Success\""); // Redirect to a success page
     }
 
-    private int getCoadminID(HttpServletRequest request) throws ServletException {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            Integer coadminID = (Integer) session.getAttribute("coadminId");
-            if (coadminID != null) {
-                return coadminID;
-            }
-        }
-        throw new ServletException("CoadminID not found in session.");
-    }
+//    private int getCoadminID(HttpServletRequest request) throws ServletException {
+//        HttpSession session = request.getSession(false);
+//        if (session != null) {
+//            Integer coadminID = (Integer) session.getAttribute("coadminId");
+//            if (coadminID != null) {
+//                return coadminID;
+//            }
+//        }
+//        throw new ServletException("CoadminID not found in session.");
+//    }
 
-    private void saveFile(InputStream fileInputStream, int postID, int coadminId) throws ServletException {
+    private void saveFile(InputStream fileInputStream, int postID, int coadminID) throws ServletException {
         String sql = "INSERT INTO Image (PostID, CoadminID, ImageData) VALUES (?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setInt(1, postID);
-            stmt.setInt(2, coadminId); // Assuming this method exists or is implemented elsewhere
+            stmt.setInt(2, coadminID); // Assuming this method exists or is implemented elsewhere
             stmt.setBlob(3, fileInputStream);
             
             stmt.executeUpdate();

@@ -366,7 +366,7 @@
     <input type="number" id="price" name="price" step="0.01" class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:ring focus:ring-red-200">
 
     <label for="offPercentage" class="block text-sm font-medium text-red-700 mb-2">Discount Percentage:</label>
-    <input type="number" id="offPercentage" name="offPercentage" step="0.01" min="0" max="100" class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:ring focus:ring-red-200" placeholder="0.00">
+    <input type="number" id="offPercentage" name="offPercentage" step="0.01" value="0" min="0" max="100" class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:ring focus:ring-red-200" placeholder="0.00">
 
     <div class="flex items-center justify-center w-full mb-2">
         <label for="hotelImages" class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
@@ -415,7 +415,7 @@
     <input type="number" id="price" name="price" step="0.01" class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:ring focus:ring-red-200">
 
     <label for="offPercentage" class="block text-sm font-medium text-red-700 mb-2">Discount Percentage:</label>
-    <input type="number" id="offPercentage" name="offPercentage" step="0.01" min="0" max="100" class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:ring focus:ring-red-200" placeholder="0.00">
+    <input type="number" id="offPercentage" name="offPercentage" step="0.01" value="0" min="0" max="100" class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:ring focus:ring-red-200" placeholder="0.00">
 
     <label for="tableNumber" class="block text-sm font-medium text-red-700 mb-2">Table Number:</label>
     <input type="number" id="tableNumber" name="tableNumber" class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:ring focus:ring-red-200">
@@ -471,7 +471,7 @@
     <input type="number" id="price" name="price" step="0.01" class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:ring focus:ring-red-200">
 
     <label for="offPercentage" class="block text-sm font-medium text-red-700 mb-2">Discount Percentage:</label>
-    <input type="number" id="offPercentage" name="offPercentage" step="0.01" min="0" max="100" class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:ring focus:ring-red-200" placeholder="0.00">
+    <input type="number" id="offPercentage" name="offPercentage" step="0.01" value="0" min="0" max="100" class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:ring focus:ring-red-200" placeholder="0.00">
 
     <div class="flex items-center justify-center w-full mb-2">
         <label for="transportationImages" class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
@@ -505,23 +505,26 @@
 										<h2
 											class="text-3xl text-red-700 font-semibold mb-6 text-gray-800">Add
 											Article</h2>
-										<form action="UploadArticleServlet" method="post"
+										<form action="post" method="post"
 											enctype="multipart/form-data">
+    <input type="hidden" value="create" name="mode">
+    <input type="hidden" value="article" name="postType">
+	<input type="hidden" value="" id="coadminId" name="coadminId">											
 											<label for="articleTitle"
 												class="block text-sm font-medium text-red-700 mb-2">Title:</label>
-											<input type="text" id="articleTitle" name="articleTitle"
+											<input type="text" id="articleTitle" name="title"
 												required
 												class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:ring focus:ring-red-200">
 
 											<label for="articleContent"
 												class="block text-sm font-medium text-red-700 mb-2">Content:</label>
-											<textarea id="articleContent" name="articleContent" rows="6"
+											<textarea id="articleContent" name="content" rows="6"
 												required
 												class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:ring focus:ring-red-200"></textarea>
 
 											<label for="articleCategory"
 												class="block text-sm font-medium text-red-700 mb-2">Category:</label>
-											<select id="articleCategory" name="articleCategory" required
+											<select id="articleCategory" name="category" required
 												class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:ring focus:ring-red-200">
 												<option value="Travel">Travel</option>
 												<option value="Food">Food</option>
@@ -544,7 +547,7 @@
 											            </p>
 											            <p class="text-xs text-gray-500">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
 											        </div>
-											        <input id="articleImages" type="file" class="hidden" name="images" accept="image/*" multiple />
+													<input id="articleImages" type="file" class="hidden" name="images" accept="image/*" multiple />
 											    </label>
 											</div>
 											
@@ -942,22 +945,14 @@
 	document.addEventListener("DOMContentLoaded", function() {
 	    // Retrieve values from localStorage
 	    const coadminIdValues = localStorage.getItem('coadminId');
-
-	        // Add more IDs as needed
-
 	    // Get all input elements with the class 'coadminId'
-	    const hiddenInputs = document.querySelectorAll('.coadminId');
+	    const hiddenInputs = document.querySelectorAll('#coadminId');
 
 	    // Check if there are enough values to populate all fields
-	    if (hiddenInputs.length > 0 && coadminIdValues.length > 0) {
 	        hiddenInputs.forEach((input, index) => {
-	            if (index < coadminIdValues.length) {
-	                input.value = coadminIdValues[index];
-	            }
+	                input.value = coadminIdValues;
 	        });
-	    } else {
-	        console.error("No hidden inputs found or no values in localStorage.");
-	    }
+
 	});
     </script>
 </body>
