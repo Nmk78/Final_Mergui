@@ -1,59 +1,42 @@
 CREATE TABLE Customer (
     CustomerID INT PRIMARY KEY AUTO_INCREMENT,
-    UserName VARCHAR(255) NOT NULL,
+    UserName TEXT NOT NULL,
     Email VARCHAR(255) UNIQUE NOT NULL,
-    PasswordHash VARCHAR(255) NOT NULL,
+    PasswordHash TEXT NOT NULL,
+    Phone VARCHAR(11),
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
 CREATE TABLE Admin (
     AdminID INT PRIMARY KEY AUTO_INCREMENT,
-    UserName VARCHAR(255) NOT NULL,
+    UserName TEXT NOT NULL,
     Email VARCHAR(255) UNIQUE NOT NULL,
-    PasswordHash VARCHAR(255) NOT NULL,
+    PasswordHash TEXT NOT NULL,
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE Coadmin (
     CoadminID INT PRIMARY KEY AUTO_INCREMENT,
-    UserName VARCHAR(255) NOT NULL,
+    UserName TEXT NOT NULL,
     Email VARCHAR(255) UNIQUE NOT NULL,
-    PasswordHash VARCHAR(255) NOT NULL,
-    ActivationCode VARCHAR(255),
+    PasswordHash TEXT NOT NULL,
+    Phone VARCHAR(11),
+    ActivationCode TEXT,
     IsActive BOOLEAN DEFAULT FALSE,
-    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-
-CREATE TABLE BusinessProfile (
-    BusinessProfileID INT PRIMARY KEY AUTO_INCREMENT,
-    BusinessName VARCHAR(255) NOT NULL,
-    Location VARCHAR(255) NOT NULL,
+    BusinessType ENUM('hotel', 'restaurant', 'transportation', 'combine'),
+    BusinessName TEXT NOT NULL,
+    Location TEXT NOT NULL,
     Description TEXT,
-    CoadminID INT,
-    FOREIGN KEY (CoadminID) REFERENCES Coadmin(CoadminID),
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-
-CREATE TABLE Service (
-    ServiceID INT PRIMARY KEY AUTO_INCREMENT,
-    BusinessProfileID INT,
-    ServiceType ENUM('hotel', 'restaurant', 'transportation') NOT NULL,
-    ServiceName VARCHAR(255) NOT NULL,
-    FOREIGN KEY (BusinessProfileID) REFERENCES BusinessProfile(BusinessProfileID),
-    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 
 CREATE TABLE Room (
     RoomID INT PRIMARY KEY AUTO_INCREMENT,
-    ServiceID INT,
+    CoadminID INT,
     RoomNumber INT NOT NULL,
-    RoomType VARCHAR(255) NOT NULL,
+    RoomType TEXT NOT NULL,
     Price DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (ServiceID) REFERENCES Service(ServiceID),
+    FOREIGN KEY (CoadminID) REFERENCES Coadmin(CoadminID),
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -70,10 +53,10 @@ CREATE TABLE RoomReservation (
 
 CREATE TABLE RestaurantTable (
     TableID INT PRIMARY KEY AUTO_INCREMENT,
-    ServiceID INT,
+    CoadminID INT,
     TableNumber INT,
     Seats INT,
-    FOREIGN KEY (ServiceID) REFERENCES Service(ServiceID),
+    FOREIGN KEY (CoadminID) REFERENCES Coadmin(CoadminID),
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -81,7 +64,7 @@ CREATE TABLE RestaurantReservation (
     ReservationID INT PRIMARY KEY AUTO_INCREMENT,
     RestaurantTableID INT,
     CustomerID INT,
-    ReservationDate DATE,
+    ReservationDate DATE NOT NULL,
     FOREIGN KEY (RestaurantTableID) REFERENCES RestaurantTable(TableID),
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -89,10 +72,12 @@ CREATE TABLE RestaurantReservation (
 
 CREATE TABLE Transportation (
     TransportationID INT PRIMARY KEY AUTO_INCREMENT,
-    ServiceID INT,
-    VehicleType VARCHAR(255) NOT NULL,
-    VehicleNumber VARCHAR(255) NOT NULL,
-    FOREIGN KEY (ServiceID) REFERENCES Service(ServiceID),
+    CoadminID INT,
+    Phone VARCHAR(11),
+    VehicleType TEXT NOT NULL,
+    VehicleNumber TEXT NOT NULL,
+    Price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (CoadminID) REFERENCES Coadmin(CoadminID),
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -100,8 +85,8 @@ CREATE TABLE TransportationBooking (
     BookingID INT PRIMARY KEY AUTO_INCREMENT,
     TransportationID INT,
     CustomerID INT,
-    PickupLocation VARCHAR(255) NOT NULL,
-    DropoffLocation VARCHAR(255) NOT NULL,
+    PickupLocation TEXT NOT NULL,
+    DropoffLocation TEXT NOT NULL,
     BookingDate DATE NOT NULL,
     FOREIGN KEY (TransportationID) REFERENCES Transportation(TransportationID),
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
@@ -112,15 +97,14 @@ CREATE TABLE UserActivity (
     ActivityID INT PRIMARY KEY AUTO_INCREMENT,
     UserID INT,
     UserType ENUM('customer', 'admin', 'coadmin') NOT NULL,
-    ActivityType VARCHAR(255) NOT NULL,
+    ActivityType TEXT NOT NULL,
     ActivityDetails TEXT,
     ActivityDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
 CREATE TABLE ActivationCode (
     CodeID INT PRIMARY KEY AUTO_INCREMENT,
-    Code VARCHAR(255) UNIQUE NOT NULL,
+    Code varchar(255) UNIQUE NOT NULL,
     AdminID INT,
     CoadminID INT,
     IsUsed BOOLEAN DEFAULT FALSE,
@@ -128,4 +112,3 @@ CREATE TABLE ActivationCode (
     FOREIGN KEY (CoadminID) REFERENCES Coadmin(CoadminID),
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-

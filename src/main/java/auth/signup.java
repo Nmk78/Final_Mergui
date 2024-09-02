@@ -34,11 +34,12 @@ public class signup extends HttpServlet {
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String userType = request.getParameter("role");
+        String location = request.getParameter("location");
         String activationCode = request.getParameter("activationCode"); // New parameter for activation code
 
         // Validate required parameters
-        if (username == null || password == null || email == null || phone == null || userType == null ||
-            username.isEmpty() || password.isEmpty() || phone.isEmpty() || email.isEmpty() || userType.isEmpty()) {
+        if (username == null || password == null || email == null || phone == null || userType == null || location == null ||
+            username.isEmpty() || password.isEmpty() || phone.isEmpty() || location.isEmpty() || email.isEmpty() || userType.isEmpty()) {
             response.sendRedirect("/Mergui_Project/signup.html?err=missing_parameters");
             return;
         }
@@ -61,8 +62,10 @@ public class signup extends HttpServlet {
 
             if (userType.equalsIgnoreCase("coadmin")) {
             	System.out.println("//Coadmin");
+            	System.out.println("Activation Code: " + activationCode);
+
                 // Check if the activation code is valid and unused
-                String checkCodeSql = "SELECT CodeID FROM activationcode WHERE Code = ? AND IsUsed = 0";
+                String checkCodeSql = "SELECT CodeID FROM ActivationCode WHERE Code = ? AND IsUsed = 0";
                 statement = connection.prepareStatement(checkCodeSql);
                 statement.setString(1, activationCode);
                 resultSet = statement.executeQuery();
@@ -73,30 +76,31 @@ public class signup extends HttpServlet {
                     int codeId = resultSet.getInt("CodeID");
 
                     // Register the coadmin
-                    String insertSql = "INSERT INTO coadmin (username, PasswordHash, email, phone) VALUES (?, ?, ?, ?)";
+                    String insertSql = "INSERT INTO coadmin (BusinessName, PasswordHash, email, phone, Location) VALUES (?, ?, ?, ?, ?)";
                     statement = connection.prepareStatement(insertSql);
                     statement.setString(1, username);
                     statement.setString(2, password); // TODO: Hash the password before storing
                     statement.setString(3, email);
                     statement.setString(4, phone);
+                    statement.setString(5, location);
+
 
                     int rowsInserted = statement.executeUpdate();
 
                     if (rowsInserted > 0) {
                         // Update activation code to mark it as used
-                        String updateCodeSql = "UPDATE activationcode SET CoadminID = ?, IsUsed = 1 WHERE CodeID = ?";
+                        String updateCodeSql = "UPDATE activationcode SET  IsUsed = 1 WHERE CodeID = ?";
                         statement = connection.prepareStatement(updateCodeSql);
-                        statement.setInt(1, getUserId(username, connection)); // Retrieve the new coadmin ID
-                        statement.setInt(2, codeId);
+                        statement.setInt(1, codeId);
                         statement.executeUpdate();
 
                         // Get the current session or create one if it doesn't exist
                         HttpSession session = request.getSession();
                         session.setAttribute("name", username);
                         session.setAttribute("email", email);
-                        session.setAttribute("userType", userType);
+                        session.setAttribute("userType", "admin");
                         session.setAttribute("phone", phone);
-                        response.sendRedirect("/Mergui_Project/user.jsp");
+                        response.sendRedirect("/Mergui_Project/coadmin.jsp");
                     } else {
                         // Insert failed
                         response.sendRedirect("/Mergui_Project/signup.html?err=signup_failed");
@@ -123,8 +127,8 @@ public class signup extends HttpServlet {
                     // Insert was successful
                     session.setAttribute("name", username);
                     session.setAttribute("email", email);
-                    session.setAttribute("userType", userType);
-                    session.setAttribute("phone", phone);
+                    session.setAttribute("userType", "user");
+                    session.setAttribute("phone", "phone");
                     response.sendRedirect("/Mergui_Project/user.jsp");
                 } else {
                     // Insert failed
@@ -160,7 +164,7 @@ public class signup extends HttpServlet {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("CoadminID");
-                } else {
+                } else {    
                     throw new SQLException("User not found: " + username);
                 }
             }

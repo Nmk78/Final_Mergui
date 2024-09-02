@@ -19,6 +19,7 @@
 <script>
     // Function to save data to LocalStorage
     function saveToLocalStorage(key, value) {
+    	console.log("Saved", value)
         localStorage.setItem(key, value);
     }
 
@@ -42,7 +43,7 @@
     function handlePageLoad() {
         var name = "<%= session.getAttribute("name") != null ? session.getAttribute("name").toString() : "" %>";
         var email = "<%= session.getAttribute("email") != null ? session.getAttribute("email").toString() : "" %>";
-        var userType = "<%= session.getAttribute("user_type") != null ? session.getAttribute("user_type").toString() : "" %>";
+        var userType = "<%= session.getAttribute("userType") != null ? session.getAttribute("userType").toString() : "" %>";
 		console.log("Name" + name + "Email "+ email +"UserType "+ userType)
         if (name && email && userType) {
         	localStorage.removeItem('name');
@@ -52,7 +53,7 @@
 
             saveToLocalStorage('name', name);
             saveToLocalStorage('email', email);
-            saveToLocalStorage('userType', userType);
+            saveToLocalStorage('userType', "user");
             saveToLocalStorage('isLoggedIn', true);
         } else {
             console.log("Can't set user data, maybe it already exists.");

@@ -43,6 +43,72 @@
                 
             }
         };
+        
+        // Function to populate the coadminId field from localStorage
+        function populateCoadminId() {
+            // Retrieve the coadminId from localStorage
+            const coadminId = localStorage.getItem('coadminId');
+
+            // Check if the coadminId exists in localStorage
+            if (coadminId) {
+                // Populate the hidden input field with the retrieved coadminId
+                document.getElementById('coadminId').value = coadminId;
+            } else {
+                console.warn('coadminId not found in localStorage');
+            }
+        }
+
+        // Execute the function when the page loads
+        window.onload = populateCoadminId;
+        
+        // Function to save data to LocalStorage
+        function saveToLocalStorage(key, value) {
+        	console.log("Saved", value)
+            localStorage.setItem(key, value);
+        }
+
+        // Function to get data from LocalStorage
+        function getFromLocalStorage(key) {
+            return localStorage.getItem(key);
+        }
+
+        function populateProfileData() {
+            let name = getFromLocalStorage("name") || "No Name";
+            let email = getFromLocalStorage("email") || "No Email";
+            let userType = getFromLocalStorage("userType") || "No Type";
+
+            document.getElementById("name").innerText = name;
+            document.getElementById("email").innerText = email;
+            document.getElementById("userType").innerText = userType;
+        }
+
+
+        // Function to handle page load and save data
+        function handlePageLoad() {
+            var name = "<%= session.getAttribute("name") != null ? session.getAttribute("name").toString() : "" %>";
+            var email = "<%= session.getAttribute("email") != null ? session.getAttribute("email").toString() : "" %>";
+            var userType = "<%= session.getAttribute("userType") != null ? session.getAttribute("userType").toString() : "" %>";
+    		console.log("Name" + name + "Email "+ email +"UserType "+ userType)
+            if (name && email && userType) {
+            	localStorage.removeItem('name');
+            	localStorage.removeItem('email');
+            	localStorage.removeItem('userType');
+            	localStorage.removeItem('isLoggedIn');
+
+                saveToLocalStorage('name', name);
+                saveToLocalStorage('email', email);
+                saveToLocalStorage('userType', "admin");
+                saveToLocalStorage('isLoggedIn', true);
+            } else {
+                console.log("Can't set user data, maybe it already exists.");
+            }
+
+            // Populate profile data after saving to LocalStorage
+            populateProfileData();
+        }
+
+     	// Ensure the function runs when the page loads
+    	document.addEventListener("DOMContentLoaded", handlePageLoad);
     </script>
         <style>
         /* Tailwind CSS classes for toast animation */
@@ -135,43 +201,7 @@
 						</div>
 					</div>
 					</div>
-					<div id="right" class="w-2/5 rounded-lg p-5 border border-red-500">
-        				<button id="openModalButton" class="bg-red-500 w-full h-full text-white py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">Open Business Profile Form</button>
-					</div>
 				</div>
-					
-
-    <!-- Modal structure -->
-    <div id="modal" class="modal fixed inset-1 items-center justify-center bg-gray-900 bg-opacity-50">
-        <div class="w-[450px] mx-auto p-6 bg-white rounded-lg shadow-md relative">
-            <button id="closeModalButton" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
-                &times;
-            </button>
-            <h1 class="text-2xl font-semibold mb-4 text-center">Create Business Profile</h1>
-            <form action="/createBusinessProfile" method="post">
-				<input type="hidden" id="coadminId" name="coadminId" required> 
-            
-                <div class="mb-4">
-                    <label for="businessName" class="block text-gray-700 text-sm font-bold mb-2">Business Name:</label>
-                    <input type="text" id="businessName" name="businessName" required 
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div class="mb-4">
-                    <label for="location" class="block text-gray-700 text-sm font-bold mb-2">Location:</label>
-                    <input type="text" id="location" name="location" required 
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div class="mb-4">
-                    <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
-                    <textarea id="description" name="description" rows="4"
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                </div>
-                <div class="flex items-center justify-center">
-                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
     
 
 					<div class="flex">

@@ -49,11 +49,17 @@
 
                 <!-- Activation Code (hidden by default) -->
                 <div id="activationCodeContainer" class="mt-4 hidden">
+                
+			<div class="mb-4">
+                <label for="password" class="block text-sm font-medium text-gray-700">Location</label>
+                <input name="location" id="location" type="text" placeholder="Enter your Business Location" required class="w-full mt-1 p-3 border border-gray-300 rounded focus:ring-teal-500 focus:border-teal-500">
+            </div>
+            
                     <label for="activationCode" class="block text-sm font-medium text-gray-700">Activation Code</label>
-                    <input name="activationCode" id="activationCode" type="hidden" placeholder="Enter your activation code" class="w-full mt-1 p-3 border border-gray-300 rounded focus:ring-teal-500 focus:border-teal-500">
+                    <input name="activationCode" id="activationCode" type="text" placeholder="Enter your activation code" class="w-full mt-1 p-3 border border-gray-300 rounded focus:ring-teal-500 focus:border-teal-500">
                     
                     <div class="max-w-sm w-full mx-auto">
-
+<!-- 
    <div class="w-full flex justify-around mb-2 space-x-2 rtl:space-x-reverse">
         <div>
             <label for="code-1" class="sr-only">First code</label>
@@ -80,7 +86,7 @@
             <input type="text" maxlength="1" data-focus-input-init data-focus-input-prev="code-5" id="code-6" class="block w-9 h-9 py-3 text-sm font-extrabold text-center text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 "  />
         </div>
     </div>
-
+- -->
 
                         <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500">Please introduce the 6 digit code we sent via email.</p>
                     </div>
@@ -99,9 +105,8 @@
             Already have an account? <a href="signin.html" class="text-red-700 hover:text-red-500">Sign In to Your Account</a>
         </p>
     </div>
-    
-    <script>
-        function updateActivationCode() {
+
+<!--         function updateActivationCode() {
             const codeInputs = document.querySelectorAll('#activationCodeContainer input[type="text"]');
             const activationCode = Array.from(codeInputs).map(input => input.value).join('');
             document.getElementById('activationCode').value = activationCode;
@@ -128,6 +133,8 @@
                 focusNextInput(this, prevId, nextId);
             });
         });
+ -->    
+    <script>
 
         function toggleActivationCode() {
             const roleSelect = document.getElementById('role');
