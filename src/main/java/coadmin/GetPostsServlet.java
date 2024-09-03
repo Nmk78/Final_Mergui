@@ -34,24 +34,47 @@ public class GetPostsServlet extends HttpServlet {
         // Retrieve query parameters
         String postType = request.getParameter("postType");
         String category = request.getParameter("category"); // Optional filtering
+        String coadminId = request.getParameter("coadminId"); // Optional filtering
 
-        // Construct SQL query with optional filtering and join with Coadmin
-        StringBuilder sqlBuilder = new StringBuilder("SELECT Post.*, Coadmin.username FROM Post ");
+        StringBuilder sqlBuilder = new StringBuilder();
+
+        // Always start with the base query
+        sqlBuilder.append("SELECT * FROM Post ");
         sqlBuilder.append("JOIN Coadmin ON Post.CoadminID = Coadmin.CoadminID ");
-        if (postType != null || category != null) {
+
+        // Check if any conditions are present
+        boolean hasCondition = false;
+
+        if (postType != null || category != null || coadminId != null) {
             sqlBuilder.append("WHERE ");
+            
             if (postType != null) {
                 sqlBuilder.append("Post.PostType = ?");
+                hasCondition = true; // Indicates that a condition has been added
             }
+
             if (category != null) {
-                if (postType != null) {
+                if (hasCondition) {
                     sqlBuilder.append(" AND ");
                 }
                 sqlBuilder.append("Post.category = ?");
+                hasCondition = true; // Indicates that a condition has been added
+            }
+
+            if (coadminId != null) {
+                if (hasCondition) {
+                    sqlBuilder.append(" AND ");
+                }
+                sqlBuilder.append("Post.CoadminID = ?");
             }
         }
-        sqlBuilder.append(" ORDER BY Post.CreatedAt DESC"); // Optional: order by creation date
-        
+
+        // Add ordering clause
+        sqlBuilder.append(" ORDER BY Post.CreatedAt DESC");
+
+        // Log or print the query for debugging
+        System.out.println("Constructed SQL Query: " + sqlBuilder.toString());
+
         JsonArray postsArray = new JsonArray();
         
         String jdbcURL = "jdbc:mysql://localhost:3306/mergui";
@@ -63,13 +86,18 @@ public class GetPostsServlet extends HttpServlet {
             Connection conn = DriverManager.getConnection(jdbcURL, dbUser, dbPassword);
 
              PreparedStatement stmt = conn.prepareStatement(sqlBuilder.toString());
-            
+
             int paramIndex = 1;
+            
+            // Set parameters in the PreparedStatement
             if (postType != null) {
                 stmt.setString(paramIndex++, postType);
             }
             if (category != null) {
-                stmt.setString(paramIndex, category);
+                stmt.setString(paramIndex++, category);
+            }
+            if (coadminId != null) {
+                stmt.setString(paramIndex++, coadminId);
             }
 
             try (ResultSet rs = stmt.executeQuery()) {

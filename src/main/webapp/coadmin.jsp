@@ -603,102 +603,26 @@
 									Add Article</button>
 							</div>
 							<div class="flex flex-col flex-wrap">
-								<!-- Room Table -->
-								<div class="table-container w-full p-6">
-									<div class="w-full flex items-center justify-around">
-										<p class="text-xl w-1/3 font-bold text-red-700">Room</p>
-										<div class="w-3/5 flex-1">
-											<input id="searchInputRooms" type="text"
-												placeholder="Search Rooms"
-												class="mb-2 p-2 border border-gray-300 rounded" />
-											<select id="sortSelectRooms"
-												class="mb-2 p-2 border border-gray-300 rounded">
-												<option value="none">Sort By</option>
-												<option value="price">Price</option>
-												<option value="promotion_price">Promotion Price</option>
-												<option value="room_type">Room Type</option>
-											</select>
-										</div>
-									</div>
-									<div id="tableContainerRooms" class="overflow-x-auto"></div>
-								</div>
-								
-										<!-- Separator Line -->
-										<div class="w-full border-t border-red-500 my-6"></div>
-
-										<!-- Restaurant Table -->
-										<div class="table-container w-full p-6">
-											<div class="w-full flex items-center justify-around">
-												<p class="text-xl w-1/3 font-bold text-red-700">
-													Restaurants</p>
-												<div class="flex-1 w-3/5">
-													<input id="searchInputRestaurants" type="text"
-														placeholder="Search Restaurants"
-														class="mb-2 w-2/3 p-2 border border-gray-300 rounded" />
-													<select id="sortSelectRestaurants"
-														class="mb-2 w-1/3 p-2 border border-gray-300 rounded">
-														<option value="none">Sort By</option>
-														<option value="price">Price</option>
-														<option value="type">Type</option>
-													</select>
-												</div>
-											</div>
-											<div id="tableContainerRestaurants" class="overflow-x-auto"></div>
-										</div>
-
-
-
-<!-- Separator Line -->
-										<div class="w-full border-t border-red-500 my-6"></div>
-										
-											
-											
-										<!-- Transportation Table -->
-										<div class="table-container w-full md:w-1/2 p-2">
-											<div class="w-full flex items-center justify-around">
-												<p class="text-xl w-1/3 font-bold text-red-700">
-													Transportations</p>
-												<div class="flex-1 w-3/5">
-													<input id="searchInputTransportation" type="text"
-														placeholder="Search Transportation"
-														class="mb-2 p-2 border border-gray-300 rounded" />
-													<select id="sortSelectTransportation"
-														class="mb-2 p-2 border border-gray-300 rounded">
-														<option value="none">Sort By</option>
-														<option value="price">Price</option>
-														<option value="type">Type</option>
-													</select>
-												</div>
-											</div>
-											<div id="tableContainerTransportation"
-												class="overflow-x-auto"></div>
-										</div>
-
-
-
-<!-- Separator Line -->
-										<div class="w-full border-t border-red-500 my-6"></div>
-										
-											
-										<!-- Article Table -->
-										<div class="table-container w-full md:w-1/2 p-2">
-											<div class="w-full flex items-center justify-around">
-												<p class="text-xl w-1/3 font-bold text-red-700">
-													Articles</p>
-												<div class="w-3/5">
-													<input id="searchInputArticles" type="text"
-														placeholder="Search Articles"
-														class="mb-2 p-2 border border-gray-300 rounded" />
-													<select id="sortSelectArticles"
-														class="mb-2 p-2 border border-gray-300 rounded">
-														<option value="none">Sort By</option>
-														<option value="title">Title</option>
-													</select>
-												</div>
-											</div>
-											<div id="tableContainerArticles" class="overflow-x-auto"></div>
-										</div>
-									</div>
+								    <div class="table-container w-full p-6">
+        <div class="w-full flex items-center justify-around">
+            <p class="text-xl w-1/3 font-bold text-red-700">Table</p>
+            <div class="w-3/5 flex-1">
+                <select id="dataTypeSelect" class="mb-2 p-2 border border-gray-300 rounded">
+                    <option value="">Select Table Type</option>
+                    <option value="hotel">Rooms</option>
+                    <option value="transportation">Transportation</option>
+                    <option value="article">Articles</option>
+                    <option value="restaurant">Restaurants</option>
+                </select>
+                <input id="searchInput" type="text" placeholder="Search" class="mb-2 p-2 border border-gray-300 rounded" />
+                <select id="sortSelect" class="mb-2 p-2 border border-gray-300 rounded">
+                    <option value="none">Sort By</option>
+                </select>
+            </div>
+        </div>
+        <div id="tableContainer" class="overflow-x-auto"></div>
+    </div>
+							</div>
 								</div>
 							</div>
 				</section>
@@ -955,5 +879,201 @@
 
 	});
     </script>
+    
+<script type="text/javascript">
+    // Define columns based on data type
+    const roomColumns = [
+        { header: 'Room Number', accessor: (item) => item.roomNumber },
+        { header: 'Type', accessor: (item) => item.type },
+        { header: 'Capacity', accessor: (item) => item.capacity },
+        { header: 'Available', accessor: (item) => item.available ? 'Yes' : 'No' }
+    ];
+
+    const transportationColumns = [
+        { header: 'Vehicle Type', accessor: (item) => item.VehicleType },
+        { header: 'Price', accessor: (item) => item.Price },
+        { header: 'Promotion', accessor: (item) => item.offPercentage }
+    ];
+
+    const articleColumns = [
+        { header: 'Title', accessor: (item) => item.Title },
+        { header: 'Content', accessor: (item) => item.content },
+        { header: 'Published Date', accessor: (item) => item.CreatedAt },
+        { header: 'Category', accessor: (item) => item.category }
+    ];
+
+    const restaurantColumns = [
+        { header: 'Name', accessor: (item) => item.name },
+        { header: 'Cuisine', accessor: (item) => item.cuisine },
+        { header: 'Location', accessor: (item) => item.location },
+        { header: 'Rating', accessor: (item) => item.rating }
+    ];
+
+    const getColumnsForType = (type) => {
+        switch (type) {
+            case 'rooms':
+                return roomColumns;
+            case 'transportation':
+                return transportationColumns;
+            case 'articles':
+                return articleColumns;
+            case 'restaurants':
+                return restaurantColumns;
+            default:
+                return [];
+        }
+    };
+
+    // Fetch data with async/await and improved error handling
+const fetchData = async (type) => {
+    try {
+        // Retrieve coadminId from local storage
+        const coadminId = localStorage.getItem('coadminId');
+
+        // Build the query string with the postType and optionally the coadminId
+        let url = new URL('http://localhost:8080/Mergui_Project/getPosts');
+        let params = { postType: type };
+        if (coadminId) {
+            params.coadminId = coadminId;
+        }
+
+        // Append parameters to the URL
+        url.search = new URLSearchParams(params).toString();
+
+        // Fetch the data
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.statusText);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return []; // Return an empty array in case of an error
+    }
+};
+
+
+    // Generate table HTML using string concatenation
+    const generateTable = (data, columns) => {
+    	console.log(data)
+    	console.log("Cols",columns)
+        let tableHTML = '<table class="min-w-full border-collapse border border-gray-300">';
+        tableHTML += '<thead><tr>';
+
+        // Add column headers
+        for (let i = 0; i < columns.length; i++) {
+            tableHTML += '<th class="border border-gray-300 p-2">' + columns[i].header + '</th>';
+        }
+        tableHTML += '<th class="border border-gray-300 p-2">Actions</th>';
+        tableHTML += '</tr></thead><tbody>';
+
+        // Add rows
+        for (let j = 0; j < data.length; j++) {
+            const item = data[j];
+
+            // Convert item to JSON and escape any special characters
+            const itemJSON = JSON.stringify(item)
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '\\"');
+
+            tableHTML += '<tr onclick="openDrawer(\'' + itemJSON + '\')" style="cursor: pointer;">';
+
+            for (let k = 0; k < columns.length; k++) {
+                const col = columns[k];
+                tableHTML += '<td class="border border-gray-300 p-2">' + col.accessor(item) + '</td>';
+            }
+
+            tableHTML += '<td class="border border-gray-300 p-2">';
+            tableHTML += '<button onclick="event.stopPropagation(); openDrawer(\'' + itemJSON + '\')">Edit</button>';
+            tableHTML += '</td>';
+            tableHTML += '</tr>';
+        }
+
+        tableHTML += '</tbody></table>';
+        return tableHTML;
+    };
+
+    // Update table content with filtering and sorting
+    const updateTable = (data, columns) => {
+        const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+        const sortCriteria = document.getElementById('sortSelect').value;
+
+        let filteredData = filterData(data, searchQuery, columns);
+
+        if (sortCriteria !== 'none') {
+            filteredData = sortData(filteredData, sortCriteria);
+        }
+
+        document.getElementById('tableContainer').innerHTML = generateTable(filteredData, columns);
+    };
+
+    // Filter data based on search query
+// Filter data based on search query
+const filterData = (data, query, columns) => {
+    return data.filter(item => {
+        return columns.some(col => {
+            // Safeguard against undefined values
+            const value = col.accessor(item);
+            return value !== undefined && value !== null && value.toString().toLowerCase().includes(query);
+        });
+    });
+};
+
+    // Sort data based on selected criteria
+// Sort data based on selected criteria
+const sortData = (data, criteria) => {
+    if (criteria === 'none') return data;
+
+    return data.sort((a, b) => {
+        const aValue = a[criteria];
+        const bValue = b[criteria];
+
+        if (typeof aValue === 'string') {
+            return (aValue || '').localeCompare(bValue || '');
+        } else {
+            return (aValue || 0) - (bValue || 0);
+        }
+    });
+};
+
+
+    // Setup table interactions
+    const setupTableInteractions = (columns) => {
+        document.getElementById('searchInput').addEventListener('input', function() {
+            updateTable(currentData, columns);
+        });
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            updateTable(currentData, columns);
+        });
+    };
+
+    document.getElementById('dataTypeSelect').addEventListener('change', async function() {
+        const type = this.value;
+        if (!type) return;
+
+        currentData = await fetchData(type);
+        const columns = getColumnsForType(type);
+
+        // Setup sorting options
+        const sortSelect = document.getElementById('sortSelect');
+        sortSelect.innerHTML = '<option value="none">Sort By</option>';
+        columns.forEach(function(col) {
+            if (col.header !== 'Actions') {
+                sortSelect.innerHTML += '<option value="' + col.accessor.name + '">' + col.header + '</option>';
+            }
+        });
+
+        setupTableInteractions(columns);
+        updateTable(currentData, columns);
+    });
+
+    // Initial setup
+    let currentData = [];
+    document.addEventListener('DOMContentLoaded', function() {
+        setupTableInteractions([]);
+    });
+</script>
+
 </body>
 </html>
